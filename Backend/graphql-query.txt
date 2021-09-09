@@ -1,0 +1,18 @@
+mutation{
+  createUser(username:"Gabriel", password:"1234", email:"gabrielortizamador"){
+    user{
+      email
+      username
+    }
+  }
+}
+
+query{
+  allUsers{
+    edges{
+      node{
+        username
+      }
+    }
+  }
+}
