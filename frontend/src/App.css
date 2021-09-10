@@ -5,13 +5,13 @@
 }
 
 .LoginForm {	
-	padding-left: 20%;
-	padding-right: 20%;
+	padding-left: 25%;
+	padding-right: 25%;
 	padding-bottom: 50px;
 }
 
 .App-logo {
-  height: 40vmin;
+  height: 20vmin;
   pointer-events: none;
 }
 

@@ -1,98 +1,105 @@
-// import React from 'react';
-// import logo from './../logo.svg';
+import React, { useState, useEffect } from 'react';
 import './../App.css';
 import "@material-tailwind/react/tailwind.css";
+import { isLogged } from "../constants.js";
 
-// import Card from "@material-tailwind/react/Card";
-// import CardHeader from "@material-tailwind/react/CardHeader";
-// import CardBody from "@material-tailwind/react/CardBody";
-// import CardFooter from "@material-tailwind/react/CardFooter";
-// import Input from "@material-tailwind/react/Input";
-// import Button from "@material-tailwind/react/Button";
-// import H5 from "@material-tailwind/react/Heading5";
-import { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import Navbar from "@material-tailwind/react/Navbar";
+import NavbarContainer from "@material-tailwind/react/NavbarContainer";
+import NavbarWrapper from "@material-tailwind/react/NavbarWrapper";
+import NavbarBrand from "@material-tailwind/react/NavbarBrand";
+import NavbarToggler from "@material-tailwind/react/NavbarToggler";
+import NavbarCollapse from "@material-tailwind/react/NavbarCollapse";
+import Nav from "@material-tailwind/react/Nav";
+import NavItem from "@material-tailwind/react/NavItem";
+import Card from "@material-tailwind/react/Card";
+import CardBody from "@material-tailwind/react/CardBody";
+import CardFooter from "@material-tailwind/react/CardFooter";
+import H6 from "@material-tailwind/react/Heading6";
+import Paragraph from "@material-tailwind/react/Paragraph";
+import Button from "@material-tailwind/react/Button";
+import { render } from 'react-dom';
 
-// var API = process.env.REACT_APP_API;
 
-class Home extends Component {
-    // handleSubmit = (e) => {
-    //     fetch(`${API}/graphql`, {
-    //         method: "POST",
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //         },
-    //         body: JSON.stringify({
-    //             query: `mutation{
-    //             validateUser(username:"${e.target.username}",password:"${e.target.password}")
-    //             {
-    //               user{
-    //                 username
-    //               }
-    //             }
-    //           }`,
-    //         }),
-    //     }).then(res => res.json()).then(res => {
-    //         if (res.data.validateUser.user !== null) {
-    //         }
-    //     });
-    // }
+var API = process.env.REACT_APP_API;
 
-    // render() {
-    //     return (
-    //         <div className="App">
-    //             <header className="App-header">
-    //                 <img src={logo} className="App-logo" alt="logo" />
-    //             </header>
-    //             <form className="LoginForm" onSubmit={handleSubmit}>
-    //                 <Card>
-    //                     <CardHeader color="lightBlue" size="lg">
-    //                         <H5 color="white">Login</H5>
-    //                     </CardHeader>
+export const Home = () => {
 
-    //                     <CardBody>
-    //                         <div className="mt-4 mb-8 px-4">
-    //                             <Input
-    //                                 id="username"
-    //                                 name="username"
-    //                                 type="text"
-    //                                 color="lightBlue"
-    //                                 placeholder="Usuario"
-    //                                 outline={true}
-    //                             />
-    //                         </div>
-    //                         <div className="mb-4 px-4">
-    //                             <Input
-    //                                 id="password"
-    //                                 name="password"
-    //                                 type="password"
-    //                                 color="lightBlue"
-    //                                 placeholder="Contraseña"
-    //                                 outline={true}
-    //                             />
-    //                         </div>
-    //                     </CardBody>
-    //                     <CardFooter>
-    //                         <div className="flex justify-center">
-    //                             <Button
-    //                                 id="btnLogin"
-    //                                 color="lightBlue"
-    //                                 buttonType="button"
-    //                                 size="lg"
-    //                                 ripple="dark"
-    //                             >
-    //                                 Iniciar Sesión
-    //                             </Button>
-    //                         </div>
-    //                     </CardFooter>
-    //                 </Card>
-    //             </form>
+    const closeSession = async (e) => {
+        localStorage.setItem(isLogged, false);
+        window.location = "/login";
+    };
 
-    //         </div>
+    const [users, setUsers] = useState([]);
 
-    //     );
-    // }
+    const getUsers = async () => {
+        const res = await fetch(`${API}/graphql`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                query: `query{
+                    allUsers{
+                      edges{
+                        node{
+                          username
+                          email
+                        }
+                      }
+                    }
+                  }`,
+            }),
+        })
+        console.log(await res.json())
+        setUsers(await res.json())
+        
+    }
+
+
+
+    useEffect(() => {
+        getUsers();
+    }, [])
+
+    const [openNavbar, setOpenNavbar] = useState(false);
+    console.log(localStorage.getItem(isLogged))
+    if (!localStorage.getItem(isLogged)) {
+        window.location = "/login";
+        return;
+    }
+
+
+
+    return (
+        <div>
+            <Navbar color="lightBlue" navbar>
+                <NavbarContainer>
+                    <NavbarWrapper>
+                        <NavbarBrand>Usuarios</NavbarBrand>
+                        <NavbarToggler
+                            color="white"
+                            onClick={() => setOpenNavbar(!openNavbar)}
+                            ripple="light"
+                        />
+                    </NavbarWrapper>
+
+                    <NavbarCollapse open={openNavbar}>
+                        <Nav>
+                            <NavItem ripple="light" onClick={closeSession}>Cerrar Sesión</NavItem>
+                        </Nav>
+                    </NavbarCollapse>
+                </NavbarContainer>
+            </Navbar>
+            ${users.data.allUsers.edges.map(user => {
+                    <Card>
+                        <CardBody>
+                            <H6 color="gray">${user.node.username}</H6>
+                            <Paragraph color="gray">
+                                ${user.node.password}
+                            </Paragraph>
+                        </CardBody>
+                    </Card>
+                })}
+        </div>
+    );
 }
-
-
-export default withRouter(Home);

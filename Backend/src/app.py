@@ -36,9 +36,9 @@ password_secret_key = "asdf"
 auth = GraphQLAuth(app)
 flask_cors.CORS(app)
 
-@app.route('/')
-def home():
-    return 'home'
+isLogged = false
+
+
   
 @app.teardown_appcontext
 def shutdown_session(exception=None):
@@ -75,20 +75,6 @@ class CreateUser(graphene.Mutation):
             db_session.add(user)
             db_session.commit()
         return CreateUser(user=user)
-
-class ValidateUser(graphene.Mutation):
-    user = graphene.Field(UserObject)
-
-    class Arguments:
-        username = graphene.String(required=True)
-        password = graphene.String(required=True)
-
-    def mutate(self, info, username, password):
-        user = User.query.filter_by(username=username,password=jwt.encode({"password":password},password_secret_key)).first()
-        if user:
-            user = User(username=username,password=jwt.encode({"password":password},password_secret_key))
-            return ValidateUser(user=user)
-        return ValidateUser(user=user)
       
 
 class AuthMutation(graphene.Mutation):
@@ -100,8 +86,7 @@ class AuthMutation(graphene.Mutation):
         password = graphene.String()
     
     def mutate(self, info , username, password) :
-        user = User.query.filter_by(username=username,password=password).first()
-        print(user)
+        user = User.query.filter_by(username=username,password=jwt.encode({"password":password},password_secret_key)).first()
         if not user:
             raise Exception('Authenication Failure : User is not registered')
         return AuthMutation(
@@ -124,7 +109,7 @@ class Mutation(graphene.ObjectType):
     auth = AuthMutation.Field()
     create_user = CreateUser.Field()
     refresh = RefreshMutation.Field()
-    validate_user = ValidateUser.Field()
+    
 
 class Query(graphene.ObjectType):
     node = graphene.relay.Node.Field()
