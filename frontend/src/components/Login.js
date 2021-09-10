@@ -37,8 +37,7 @@ export const Login = () => {
             }),
         })
             .then(res => res.json()).then(res => {
-                console.log(res.data.auth.accessToken == null);
-                if (res.data.auth.accessToken == null)
+                if (res.data.auth == null)
                 {
                     localStorage.setItem(isLogged,false);
                     window.location = "/";
@@ -51,6 +50,12 @@ export const Login = () => {
                     
             });
     }
+
+    if (localStorage.getItem(isLogged) === "true") {
+        window.location = "/home";
+        return;
+    }
+
     return (
         <div className="App">
             <header className="App-header">

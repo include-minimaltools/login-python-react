@@ -57,7 +57,7 @@ export const Home = () => {
     }
 
     const closeSession = async (e) => {
-        localStorage.setItem(isLogged, false);
+        localStorage.setItem(isLogged,false);
         window.location = "/login";
     };
 
@@ -92,7 +92,7 @@ export const Home = () => {
     const [openNavbar, setOpenNavbar] = useState(false);
     const [showModal, setShowModal] = useState(false);
 
-    if (!localStorage.getItem(isLogged)) {
+    if (localStorage.getItem(isLogged) === "false") {
         window.location = "/login";
         return;
     }
