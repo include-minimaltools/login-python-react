@@ -17,7 +17,7 @@ var API = process.env.REACT_APP_API;
 export const Login = () => {
 
     const handleSubmit = async (e) => {
-        if(e.target.username.value == "" || e.target.password.value == "")
+        if(e.target.username.value === "" || e.target.password.value === "")
             window.location = "/";
         e.preventDefault();
         await e.preventDefault();
