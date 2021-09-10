@@ -16,7 +16,6 @@ import CardBody from "@material-tailwind/react/CardBody";
 import H6 from "@material-tailwind/react/Heading6";
 import Paragraph from "@material-tailwind/react/Paragraph";
 
-import AlertMessage from './Alert';
 
 //#region Modal
 import Modal from "@material-tailwind/react/Modal";

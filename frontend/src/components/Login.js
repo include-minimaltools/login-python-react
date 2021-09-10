@@ -17,7 +17,7 @@ import H5 from "@material-tailwind/react/Heading5";
 var API = process.env.REACT_APP_API;
 
 export const Login = () => {
-
+        
     const handleSubmit = async (e) => {
         e.preventDefault();
         await e.preventDefault();
@@ -50,6 +50,13 @@ export const Login = () => {
                     
             });
     }
+
+    console.log(localStorage.getItem(isLogged));
+    if (localStorage.getItem(isLogged)) {
+        window.location = "/home";
+        return;
+    }
+
     return (
         <div className="App">
             <header className="App-header">
