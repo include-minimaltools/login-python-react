@@ -1,8 +1,10 @@
-from flask import Flask
+from flask import Flask, jsonify
 import graphene
+import jwt
 from graphene_sqlalchemy import SQLAlchemyObjectType, SQLAlchemyConnectionField
 from flask_graphql import GraphQLView
 import json
+import flask_cors
 from flask_graphql_auth import (
     AuthInfoField,
     GraphQLAuth,
@@ -29,7 +31,10 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ashish'
 app.config["JWT_SECRET_KEY"] = "Ashish"
 
+password_secret_key = "asdf"
+
 auth = GraphQLAuth(app)
+flask_cors.CORS(app)
 
 @app.route('/')
 def home():
@@ -65,11 +70,25 @@ class CreateUser(graphene.Mutation):
         user = User.query.filter_by(username=username).first()
         if user:
             return CreateUser(user=user)
-        user = User(username=username,password=password,email=email)
+        user = User(username=username,password=jwt.encode({"password":password},password_secret_key),email=email)
         if user:
             db_session.add(user)
             db_session.commit()
         return CreateUser(user=user)
+
+class ValidateUser(graphene.Mutation):
+    user = graphene.Field(UserObject)
+
+    class Arguments:
+        username = graphene.String(required=True)
+        password = graphene.String(required=True)
+
+    def mutate(self, info, username, password):
+        user = User.query.filter_by(username=username,password=jwt.encode({"password":password},password_secret_key)).first()
+        if user:
+            user = User(username=username,password=jwt.encode({"password":password},password_secret_key))
+            return ValidateUser(user=user)
+        return ValidateUser(user=user)
       
 
 class AuthMutation(graphene.Mutation):
@@ -104,7 +123,8 @@ class RefreshMutation(graphene.Mutation):
 class Mutation(graphene.ObjectType):
     auth = AuthMutation.Field()
     create_user = CreateUser.Field()
-    refresh = RefreshMutation.Field() ## this is added
+    refresh = RefreshMutation.Field()
+    validate_user = ValidateUser.Field()
 
 class Query(graphene.ObjectType):
     node = graphene.relay.Node.Field()
