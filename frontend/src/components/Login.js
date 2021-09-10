@@ -4,6 +4,7 @@ import './../App.css';
 import "@material-tailwind/react/tailwind.css";
 import { isLogged } from '../constants';
 
+//#region Cards
 import Card from "@material-tailwind/react/Card";
 import CardHeader from "@material-tailwind/react/CardHeader";
 import CardBody from "@material-tailwind/react/CardBody";
@@ -11,6 +12,7 @@ import CardFooter from "@material-tailwind/react/CardFooter";
 import Input from "@material-tailwind/react/Input";
 import Button from "@material-tailwind/react/Button";
 import H5 from "@material-tailwind/react/Heading5";
+//#endregion
 
 var API = process.env.REACT_APP_API;
 
